@@ -11,17 +11,6 @@ pub struct DLogProof {
     pub s: Scalar,
 }
 
-const SECP256K1_ORDER_BYTES: [u8; 32] = [
-    0xFF, 0xFF, 0xFF, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFE, // This should be n - 1
-    0xBA, 0xAE, 0xD6, 0xAF, // Correct representation following the curve order
-];
-
 impl DLogProof {
     /// Generates a DLog proof using the Schnorr proof scheme.
     ///
@@ -41,22 +30,6 @@ impl DLogProof {
         let s = r + c * x;
         DLogProof { t, s }
     }
-    // pub fn prove(sid: &str, pid: u32, x: &Scalar, y: &ProjectivePoint) -> Self {
-    //     let r = generate_random_number(); // Generate random scalar
-    //     let t = ProjectivePoint::GENERATOR * r; // Commitment
-
-    //     let c = Self::hash_points(sid, pid, &[ProjectivePoint::GENERATOR, *y, t]);
-        
-    //     // Create a scalar from the order bytes
-    //     let order_generic_array = *GenericArray::from_slice(&SECP256K1_ORDER_BYTES);
-    //     // let s = (r + c * x) % Scalar::from_be_bytes_reduced(order_generic_array); // Modulo the defined order
-        
-
-    //     let order_scalar = Scalar::from_be_bytes_reduced(order_generic_array);
-
-    //     let s = (r + (c * x)) * order_scalar.invert().unwrap();
-    //     DLogProof { t, s } // Return the proof
-    // }
 
     /// Verifies the DLog proof using the Schnorr proof scheme.
     ///
@@ -102,17 +75,6 @@ impl DLogProof {
         let mut bytes_array: [u8; 32] = Default::default();
         bytes_array.copy_from_slice(&result[..32]); // Ensure the length is 32 bytes
         Scalar::from_repr(GenericArray::clone_from_slice(&bytes_array)).unwrap()
-    }
-
-    /// New instance of DLogProof with default values.
-    ///
-    /// # Returns
-    /// A `DLogProof` instance with `t` set to the identity point and `s` set to zero.
-    pub fn new() -> Self {
-        DLogProof {
-            t: ProjectivePoint::IDENTITY, // Use identity point for default
-            s: Scalar::ZERO,              // Use zero for default
-        }
     }
 }
 
