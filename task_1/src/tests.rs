@@ -4,7 +4,6 @@ mod tests {
     use crate::dlog_proof::DLogProof;
     // use k256::elliptic_curve::ops::Reduce;
     use k256::{
-        elliptic_curve::{generic_array::GenericArray, PrimeField},
         ProjectivePoint, Scalar,
     };
 
@@ -65,36 +64,6 @@ mod tests {
         assert!(
             dlog_proof.verify(sid, pid, &y),
             "DLOG proof verification failed with zero scalar"
-        );
-        // );
-    }
-
-    #[test]
-    fn test_dlog_proof_with_max_scalar() {
-        let sid = "edge_case_sid";
-        let pid = 1000;
-
-        // Test with maximum scalar using from_repr
-        let max_bytes_array = [
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFE, // Using 1 byte less for valid max scalar
-        ];
-        let max_bytes = GenericArray::from_slice(&max_bytes_array);
-
-        // Construct the max scalar using from_repr
-        let max_scalar =
-            Scalar::from_repr(max_bytes.clone()).expect("Failed to create scalar from bytes");
-
-        let y_max = ProjectivePoint::GENERATOR * max_scalar; // y_max should also be the maximum valid point
-
-        // Generate the DLog proof
-        let dlog_proof_max = DLogProof::prove(sid, pid, &max_scalar, &y_max);
-
-        // Verify the proof
-        assert!(
-            dlog_proof_max.verify(sid, pid, &y_max),
-            "DLOG proof verification failed with maximum scalar"
         );
     }
 

@@ -6,6 +6,15 @@ This project implements a Non-interactive Schnorr Zero-Knowledge Discrete Logari
 
 Zero-Knowledge Proofs (ZKPs) enable one party to prove knowledge of a discrete logarithm without revealing the value itself. Schnorr's protocol, specifically, provides an efficient means to achieve such proofs.
 
+
+## Logic Explanation
+The implementation follows the Schnorr ZKP structure:
+
+Commitment: randomness is generated, creating a commitment that indirectly links to the secret scalar.
+Challenge: Derived non-interactively to securely operate without direct synchrony between parties.
+Response Calculation: Constrained modulo the curve order, maintaining operations within valid elliptic curve parameters.
+Verification: Confirmation through recomputation of values via curve operations to assert validity.
+
 ## Key Components
 
 ### Scalar
@@ -34,3 +43,20 @@ Zero-Knowledge Proofs (ZKPs) enable one party to prove knowledge of a discrete l
 - `verify`: Validates the proof using the original point `y` and ensures the recomputed left-hand side matches what is expected for valid proofs of `y = x * G`.
 
 - `hash_points`: Creates a deterministic challenge by hashing various curve points and session identifiers, providing the Fiat-Shamir transformation necessary for non-interactive protocols.
+
+## Setup
+```bash
+git clone https://github.com/yourusername/zkp_project.git
+cd zkp_project
+```
+
+### Build
+```bash
+cargo build
+```
+
+### Test
+```bash
+cargo test
+```
+
