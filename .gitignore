@@ -1,1 +1,6 @@
-./target
+/target
+/task_2/client/node_modules/
+/task_2/client/dist/
+/task_2/client/package-lock.json
+/task_2/client/package.json
+/task_2/pkg/

@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "task_1",
+    "task_2",
 ]
 
 [profile.dev]
