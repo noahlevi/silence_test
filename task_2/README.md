@@ -1,17 +1,16 @@
 # Rust WebAssembly WebSocket Example
 
-This project demonstrates how to implement a WebSocket client using Rust compiled to WebAssembly (Wasm) and a WebSocket server using TypeScript. The client sends messages to the server and receives responses in real-time.
+## Project Overview
+This project demonstrates how to create a simple WebAssembly (Wasm) module in Rust that communicates with a WebSocket server. The WebAssembly module exports a single function, `wsPing`, which establishes a WebSocket connection, sends a message to the server, receives a response, and returns it. A basic HTML UI serves as the interface to call this function and display the results.
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
+- [Project Overview](#project-overview)
 - [Project Structure](#project-structure)
+- [WebAssembly Module Logic](#webassembly-module-logic)
+- [WebSocket Server Logic](#websocket-server-logic)
 - [Setup](#setup)
-- [Running the WebSocket Server](#running-the-websocket-server)
-- [Running the Wasm Client](#running-the-wasm-client)
-- [Testing the WebSocket Connection](#testing-the-websocket-connection)
-- [License](#license)
-- [Contributing](#contributing)
+- [Test](#test)
 
 ## Prerequisites
 
@@ -23,6 +22,40 @@ Before you begin, ensure you have the following installed on your machine:
 ```bash
   cargo install wasm-pack
 ```
+
+## WebAssembly Module Logic
+
+1. **WebSocket Initialization**:
+   - The function `wsPing(endpoint: String, message: String)` is the entry point that accepts two parameters: `endpoint`, which is the WebSocket server URL, and `message`, the message to send to the server.
+   - A new `WebSocket` object is created with the specified `endpoint`.
+
+2. **Handling Messages**:
+   - A closure is defined to handle incoming messages from the WebSocket. This closure listens for messages and sends them to a message channel (an `mpsc` channel) for asynchronous processing.
+   - The closure is wrapped with `Closure::wrap`, making it callable in the JavaScript environment.
+
+3. **Sending the Message**:
+   - The specified message is sent to the WebSocket server using the `send_with_str` method.
+
+4. **Receiving the Response**:
+   - The function waits for a response using an asynchronous future. It listens for the next message on the channel and retrieves it once the server responds.
+   - The received message is then returned as a result to the caller.
+
+5. **Error Handling**:
+   - The function uses `Result<String, JsValue>` as the return type, allowing it to handle errors gracefully. If any step fails (e.g., connection errors or message sending issues), an appropriate error is returned.
+
+## WebSocket Server Logic
+
+1. **Setup**:
+   - The WebSocket server is built using Node.js and the `ws` library. The server listens on a specified port (e.g., 8080).
+
+2. **Connection Handling**:
+   - When a client connects, the server logs the connection and prepares to listen for incoming messages.
+
+3. **Message Processing**:
+   - Each message received from the client is logged, and the server immediately responds with a corresponding "Echo" message, allowing the client to verify that the communication was successful.
+
+4. **Connection Management**:
+   - The server logs disconnections, helping to monitor client activity and maintain robust server operation
 
 ## Project Structure
 
@@ -57,7 +90,7 @@ wasm_websocket/                                                                 
 ## Setup
 
 
-### 1) Clone the Repository:
+### 1)Clone the Repository:
 
 ```bash
 git clone <repository_url>
@@ -78,7 +111,7 @@ npm install typescript @types/node ws
 npm install --save-dev ts-node @types/ws
 ```
 
-### 4) Test
+## Test
 From the root directory, initialize npm and install necessary packages:
 ```bash
 cd task_2/client
